@@ -8,16 +8,17 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/bg_color_gradient"/>
-        <View
-            android:layout_width="match_parent"
-            android:textAlignment="center"
-            android:layout_height="match_parent"
-            android:background="@drawable/bg_alpha_gradient"/>
+        android:layout_height="match_parent"
+        android:background="@color/bg">
+<!--        <View-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:background="@drawable/bg_color_gradient"/>-->
+<!--        <View-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:textAlignment="center"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:background="@drawable/bg_alpha_gradient"/>-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -30,27 +31,44 @@
                 tools:listitem="@layout/item_message"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:padding="8dp"/>
+                android:padding="0dp"/>
 
             <!-- 输入框和发送按钮 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:layout_marginBottom="40dp">
+                android:background="@color/bg"
+                android:padding="8dp">
 
                 <EditText
-                    android:id="@+id/editTextMessage"
-                    android:layout_width="0dp"
+                    android:id="@+id/et_message"
+                    android:inputType="textShortMessage"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1" />
+                    android:layout_margin="10dp"
+                    android:layout_weight=".2"
+                    android:background="@drawable/style_button_background"
+                    android:hint="请输入"
+                    android:padding="10dp"
+                    android:textSize="18sp"
+                    android:singleLine="true" />
 
                 <Button
-                    android:id="@+id/buttonSend"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black"
-                    android:text="发送"/>
+                    android:id="@+id/btn_add"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/ic_add"
+                    android:visibility="visible"/>
+                <Button
+                    android:id="@+id/btn_send"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/ic_send"
+                    android:visibility="gone" />
             </LinearLayout>
         </LinearLayout>
 
