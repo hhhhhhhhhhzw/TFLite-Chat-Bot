@@ -3,7 +3,12 @@
     <color name="black">#1b1b1b</color>
     <color name="white">#ffffff</color>
     <color name="bg">#111111</color>
-    <color name="colorPrimary">#1b1b1b</color>
+    <color name="colorPrimary">#ffffff</color>
     <color name="text">#ffffff</color>
+    <color name="editor">#1b1b1b</color>
+    <color name="user_message_bg">#262626</color>
+    <color name="bot_message_bg">#262626</color>
+    <color name="user_message_text">#ffffff</color>
+    <color name="bot_message_text">#ffffff</color>
 
 </resources>
