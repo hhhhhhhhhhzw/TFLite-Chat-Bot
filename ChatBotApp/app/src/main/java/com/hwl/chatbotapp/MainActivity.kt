@@ -3,20 +3,22 @@ package com.hwl.chatbotapp
 import MessageAdapter
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hwl.chatbotapp.databinding.ActivityMainBinding
 import com.hwl.chatbotapp.tts.TtsManager
 
-class MainActivity : ComponentActivity() {
+class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val messages = mutableListOf<Message>()
     private lateinit var adapter: MessageAdapter
-    private val mainViewModel: MainViewModel by viewModels()
+    private lateinit var mainViewModel: MainViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
         setContentView(binding.root)
         // 初始化TTS引擎
         TtsManager.initModels(this)

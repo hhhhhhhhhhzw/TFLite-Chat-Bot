@@ -39,11 +39,11 @@ class MainViewModel() : ViewModel() {
 
     val tts = TextToSpeech(App.INSTANCE, onInitListener, "com.hwl.chatbotapp")
 
-    val ttsReadyState: MutableState<Boolean> = mutableStateOf(false)
+    var ttsReadyState: MutableState<Boolean> = mutableStateOf(false)
     var ttsReady: Boolean
         get() = ttsReadyState.value
         set(value) {
-//            ttsReadyState.value = value
+            ttsReadyState.value = value
         }
 
     val speakState: MutableState<Boolean> = mutableStateOf(false)

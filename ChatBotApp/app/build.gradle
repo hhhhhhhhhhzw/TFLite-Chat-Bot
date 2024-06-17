@@ -54,4 +54,6 @@ dependencies {
     }
     implementation 'org.tensorflow:tensorflow-lite:+'
     implementation 'com.belerweb:pinyin4j:2.5.1'
+    implementation 'com.github.benjaminwan:MoshiUtils:1.0.6'
+
 }
