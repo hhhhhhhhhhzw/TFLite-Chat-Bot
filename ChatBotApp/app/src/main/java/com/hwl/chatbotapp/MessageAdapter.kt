@@ -41,7 +41,7 @@ class MessageAdapter(private val messages: List<Message>,private val mainViewMod
                 binding.tvMessage.visibility = View.GONE
                 binding.btnPlay.setOnClickListener {
                     // 处理点击事件
-                    mainViewModel.sayText("你好，我是AI助手，有什么可以帮助你的吗？")
+                    mainViewModel.sayText(binding.tvBotMessage.text.toString())
                 }
             }
         }

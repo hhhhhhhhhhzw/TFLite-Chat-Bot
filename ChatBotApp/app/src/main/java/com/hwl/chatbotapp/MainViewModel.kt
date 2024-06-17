@@ -3,9 +3,6 @@ package com.hwl.chatbotapp
 import android.speech.tts.TextToSpeech
 import android.speech.tts.TextToSpeech.OnInitListener
 import android.speech.tts.UtteranceProgressListener
-import android.util.Log
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.hwl.chatbotapp.app.App
 import java.util.*
@@ -39,18 +36,19 @@ class MainViewModel() : ViewModel() {
 
     val tts = TextToSpeech(App.INSTANCE, onInitListener, "com.hwl.chatbotapp")
 
-    var ttsReadyState: MutableState<Boolean> = mutableStateOf(false)
+
+    var ttsReadyState: Boolean = false
     var ttsReady: Boolean
-        get() = ttsReadyState.value
+        get() = ttsReadyState
         set(value) {
-            ttsReadyState.value = value
+            ttsReadyState = value
         }
 
-    val speakState: MutableState<Boolean> = mutableStateOf(false)
+    var speakState: Boolean = false
     private var isSpeak: Boolean
-        get() = speakState.value
+        get() = speakState
         set(value) {
-            speakState.value = value
+            speakState = value
         }
 
     val appVer: String = try {

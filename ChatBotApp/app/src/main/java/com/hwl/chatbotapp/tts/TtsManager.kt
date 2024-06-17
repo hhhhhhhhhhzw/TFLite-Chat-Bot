@@ -3,8 +3,6 @@ package com.hwl.chatbotapp.tts
 import android.content.Context
 import android.media.AudioFormat
 import android.speech.tts.SynthesisCallback
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import com.benjaminwan.moshi.utils.moshiAny
 import com.hwl.chatbotapp.app.App
 import com.hwl.chatbotapp.common.FASTSPEECH2_NAME
@@ -33,26 +31,26 @@ object TtsManager {
     private var inputTextJob: Job? = null//在Main线程调用，避免线程同步问题
     private lateinit var zhProcessor: ZhProcessor
 
-    val readyState: MutableState<Boolean> = mutableStateOf(false)
+    var readyState: Boolean = false
     var isReady: Boolean
-        get() = readyState.value
+        get() = readyState
         set(value) {
-            readyState.value = value
+            readyState = value
         }
 
-    val speedState: MutableState<Float> = mutableStateOf(1.0f)
+    var speedState: Float = 1.0f
     var speed: Float
-        get() = speedState.value
+        get() = speedState
         set(value) {
-            speedState.value = value
+            speedState = value
             spTtsSpeed = value
         }
 
-    val typeState: MutableState<TtsType> = mutableStateOf(TtsType.FASTSPEECH2)
+    var typeState: TtsType = TtsType.FASTSPEECH2
     var type: TtsType
-        get() = typeState.value
+        get() = typeState
         set(value) {
-            typeState.value = value
+            typeState = value
             spTtsType = value
         }
 
