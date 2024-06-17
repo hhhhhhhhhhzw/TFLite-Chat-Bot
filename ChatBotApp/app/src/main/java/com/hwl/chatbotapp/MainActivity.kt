@@ -1,23 +1,28 @@
 package com.hwl.chatbotapp
 
 import MessageAdapter
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.viewModels
+import androidx.activity.ComponentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hwl.chatbotapp.databinding.ActivityMainBinding
+import com.hwl.chatbotapp.tts.TtsManager
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity() {
     private lateinit var binding: ActivityMainBinding
     private val messages = mutableListOf<Message>()
     private lateinit var adapter: MessageAdapter
+    private val mainViewModel: MainViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        // 初始化TTS引擎
+        TtsManager.initModels(this)
 
         // 设置适配器和布局管理器
-        adapter = MessageAdapter(messages)
+        adapter = MessageAdapter(messages,mainViewModel)
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
 

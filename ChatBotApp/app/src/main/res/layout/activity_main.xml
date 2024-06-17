@@ -9,11 +9,12 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/bg">
+        android:background="@drawable/bg_color_gradient">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            tools:ignore="UselessParent">
 
             <!-- 消息列表 -->
             <androidx.recyclerview.widget.RecyclerView
@@ -40,6 +41,7 @@
                     android:background="@drawable/style_button_background"
                     android:hint="请输入"
                     android:padding="10dp"
+                    android:layout_weight="1"
                     android:textSize="18sp"
                     android:singleLine="true" />
 
