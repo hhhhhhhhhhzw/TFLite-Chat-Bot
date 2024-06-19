@@ -1,55 +1,45 @@
 package com.hwl.chatbotapp
 
-import MessageAdapter
+import android.annotation.SuppressLint
 import android.os.Bundle
-import androidx.activity.viewModels
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hwl.chatbotapp.databinding.ActivityMainBinding
-import com.hwl.chatbotapp.tts.TtsManager
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val messages = mutableListOf<Message>()
     private lateinit var adapter: MessageAdapter
     private lateinit var mainViewModel: MainViewModel
+
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
         setContentView(binding.root)
-        // 初始化TTS引擎
-        TtsManager.initModels(this)
 
-        // 设置适配器和布局管理器
-        adapter = MessageAdapter(messages,mainViewModel)
-        binding.recyclerView.adapter = adapter
+        mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
+
+        // Initialize the adapter with an empty list
+        adapter = MessageAdapter(listOf(), mainViewModel)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.adapter = adapter
 
-        // 处理发送按钮的点击事件
+        // Collecting the StateFlow from the ViewModel
+        mainViewModel.uiState.observe(this) { uiState ->
+            Log.d("MainActivity", "UI State is being collected")
+            // 更新适配器的数据
+            adapter.setMessages(uiState.messages)
+        }
+
         binding.btnSend.setOnClickListener {
             val userMessage = binding.etMessage.text.toString()
             if (userMessage.isNotEmpty()) {
-                addMessage(userMessage, true)
-                binding.etMessage.setText("")
-                simulateBotResponse(userMessage)
+                Log.d("TAG", "onCreate: $userMessage")
+                mainViewModel.sendMessage(userMessage)
+                binding.etMessage.setText("") // Clear the text field
             }
         }
     }
-    // 添加消息到列表并通知适配器更新
-    private fun addMessage(content: String, isUser: Boolean) {
-        messages.add(Message(content, isUser))
-        adapter.notifyItemInserted(messages.size - 1)
-        binding.recyclerView.scrollToPosition(messages.size - 1) // 自动滚动到最新消息
-    }
-
-    // 模拟机器人回复
-    private fun simulateBotResponse(userMessage: String) {
-        // 模拟回复逻辑，这里简单回复用户的消息
-        val botMessage = "$userMessage"
-        addMessage(botMessage, false)
-    }
 }
-

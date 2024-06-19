@@ -1,72 +1,103 @@
 package com.hwl.chatbotapp
 
 import android.speech.tts.TextToSpeech
-import android.speech.tts.TextToSpeech.OnInitListener
 import android.speech.tts.UtteranceProgressListener
+import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.hwl.chatbotapp.app.App
+import com.hwl.chatbotapp.llm.InferenceModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.launch
 import java.util.*
 
-class MainViewModel() : ViewModel() {
-    private val onInitListener = object : OnInitListener {
-        override fun onInit(status: Int) {
-            ttsReady = status != TextToSpeech.ERROR
-        }
-    }
-
+class MainViewModel : ViewModel() {
+    private val inferenceModel = InferenceModel.getInstance(App.INSTANCE)
+    private val tts = TextToSpeech(App.INSTANCE, { status ->
+        ttsReady = status != TextToSpeech.ERROR
+    }, "com.hwl.chatbotapp")
     private val progressListener = object : UtteranceProgressListener() {
-        override fun onStart(utteranceId: String?) {
-            isSpeak = true
-        }
-
-        override fun onDone(utteranceId: String?) {
-            isSpeak = false
-        }
-
-        override fun onError(utteranceId: String?) {
-            isSpeak = false
-        }
-
+        override fun onStart(utteranceId: String?) { isSpeak = true }
+        override fun onDone(utteranceId: String?) { isSpeak = false }
+        override fun onError(utteranceId: String?) { isSpeak = false }
         override fun onStop(utteranceId: String?, interrupted: Boolean) {
             isSpeak = !interrupted
             super.onStop(utteranceId, interrupted)
         }
-
     }
 
-    val tts = TextToSpeech(App.INSTANCE, onInitListener, "com.hwl.chatbotapp")
+    private val _uiState: MutableStateFlow<GemmaUiState> = MutableStateFlow(GemmaUiState())
+    val uiState: LiveData<GemmaUiState> = _uiState.asLiveData()
 
+    private val _textInputEnabled: MutableStateFlow<Boolean> =
+        MutableStateFlow(true)
+    val isTextInputEnabled: StateFlow<Boolean> =
+        _textInputEnabled.asStateFlow()
 
-    var ttsReadyState: Boolean = false
+    private var ttsReadyState: Boolean = false
     var ttsReady: Boolean
         get() = ttsReadyState
         set(value) {
             ttsReadyState = value
         }
 
-    var speakState: Boolean = false
+    private var speakState: Boolean = false
     private var isSpeak: Boolean
         get() = speakState
         set(value) {
             speakState = value
         }
 
-    val appVer: String = try {
-        App.INSTANCE.packageManager.getPackageInfo(App.INSTANCE.packageName, 0).versionName
-    } catch (e: Exception) {
-        e.printStackTrace()
-        ""
-    }
-
     init {
         tts.setOnUtteranceProgressListener(progressListener)
     }
 
+    fun sendMessage(userMessage: String) {
+        Log.d("MainViewModel", "Adding message: $userMessage")
+        viewModelScope.launch(Dispatchers.IO) {
+            _uiState.value.addMessage(userMessage, USER_PREFIX)
+            var currentMessageId: String? = _uiState.value.createLoadingMessage()
+            setInputEnabled(false)
+            try {
+                val fullPrompt = _uiState.value.fullPrompt
+                inferenceModel.generateResponseAsync(fullPrompt)
+                inferenceModel.partialResults
+                    .collectIndexed { index, (partialResult, done) ->
+                        currentMessageId?.let {
+                            if (index == 0) {
+                                _uiState.value.appendFirstMessage(it, partialResult)
+                            } else {
+                                _uiState.value.appendMessage(it, partialResult, done)
+                            }
+                            if (done) {
+                                currentMessageId = null
+                                // Re-enable text input
+                                setInputEnabled(true)
+                            }
+                        }
+                    }
+            } catch (e: Exception) {
+                _uiState.value.addMessage(e.localizedMessage ?: "Unknown Error", MODEL_PREFIX)
+                setInputEnabled(true)
+            }
+        }
+        Log.d("MainViewModel", "Message added, total: ${uiState.value?.messages?.size}")
+    }
+
+    private fun setInputEnabled(isEnabled: Boolean) {
+        _textInputEnabled.value = isEnabled
+    }
+
     fun sayText(text: String) {
-        val result = tts.setLanguage(Locale.CHINESE)
-        if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-        } else {
-            val speechResult = tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, Random().nextInt().toString())
+        if (ttsReady) {
+            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, UUID.randomUUID().toString())
         }
     }
 
@@ -77,5 +108,13 @@ class MainViewModel() : ViewModel() {
     override fun onCleared() {
         super.onCleared()
         tts.shutdown()
+    }
+
+    companion object {
+        fun getFactory() = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return MainViewModel() as T
+            }
+        }
     }
 }

@@ -41,10 +41,10 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'com.google.android.material:material:1.12.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.compose.runtime:runtime-android:1.6.8'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    implementation 'androidx.activity:activity-compose:1.9.0'
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.2")
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     // Tensorflow Lite Local
     implementation('org.tensorflow:tensorflow-lite-support:0.3.1') {
@@ -56,6 +56,7 @@ dependencies {
     implementation 'com.belerweb:pinyin4j:2.5.1'
     implementation 'com.github.benjaminwan:MoshiUtils:1.0.6'
     implementation group: 'org.tensorflow', name: 'tensorflow-lite-select-tf-ops', version: '2.12.0'
+    implementation 'com.google.mediapipe:tasks-genai:0.10.14'
 
 
 }
