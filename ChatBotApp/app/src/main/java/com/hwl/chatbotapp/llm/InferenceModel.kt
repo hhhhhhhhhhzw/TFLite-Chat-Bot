@@ -37,9 +37,10 @@ class InferenceModel private constructor(context: Context) {
         llmInference = LlmInference.createFromOptions(context, options)
     }
 
-    fun generateResponseAsync(prompt: String) {
-        llmInference.generateResponseAsync(prompt)
+    fun generateResponseAsync(prompt: String): String? {
+        var response = llmInference.generateResponse(prompt)
         Log.d("TAG", "generateResponseAsync: $prompt")
+        return response
     }
 
     companion object {

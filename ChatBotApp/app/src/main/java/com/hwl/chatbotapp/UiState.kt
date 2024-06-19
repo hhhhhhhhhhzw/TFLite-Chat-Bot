@@ -73,6 +73,7 @@ class GemmaUiState(messages: List<ChatMessage> = emptyList()) : UiState {
     override val messages: List<ChatMessage>
         get() = _messages
             .map {
+                Log.d("GemmaUiState", "${it.author} ${it.message}")
                 // Remove the prefix and suffix before showing a message in the UI
                 it.copy(
                     message = it.message.replace(START_TURN + it.author + "\n", "")

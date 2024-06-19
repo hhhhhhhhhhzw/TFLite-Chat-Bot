@@ -4,6 +4,7 @@ import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
 import java.util.*
+import kotlin.collections.ArrayList
 
 class MainViewModel : ViewModel() {
     private val inferenceModel = InferenceModel.getInstance(App.INSTANCE)
@@ -35,6 +37,20 @@ class MainViewModel : ViewModel() {
 
     private val _uiState: MutableStateFlow<GemmaUiState> = MutableStateFlow(GemmaUiState())
     val uiState: LiveData<GemmaUiState> = _uiState.asLiveData()
+    private var messages = mutableListOf<ChatMessage>()
+
+    fun getMessages(): MutableList<ChatMessage> {
+        return messages
+    }
+    fun setMessages(messages: MutableList<ChatMessage>) {
+        this.messages = messages
+    }
+    fun addMessage(message: ChatMessage) {
+        messages.add(message)
+    }
+    fun updateMessage(string: String) {
+        messages[messages.size-1].message = string
+    }
 
     private val _textInputEnabled: MutableStateFlow<Boolean> =
         MutableStateFlow(true)
@@ -58,6 +74,9 @@ class MainViewModel : ViewModel() {
     init {
         tts.setOnUtteranceProgressListener(progressListener)
     }
+    private val _response = MutableLiveData<String>()
+    val response: LiveData<String> = _response
+
 
     fun sendMessage(userMessage: String) {
         Log.d("MainViewModel", "Adding message: $userMessage")
@@ -67,28 +86,29 @@ class MainViewModel : ViewModel() {
             setInputEnabled(false)
             try {
                 val fullPrompt = _uiState.value.fullPrompt
-                inferenceModel.generateResponseAsync(fullPrompt)
-                inferenceModel.partialResults
-                    .collectIndexed { index, (partialResult, done) ->
-                        currentMessageId?.let {
-                            if (index == 0) {
-                                _uiState.value.appendFirstMessage(it, partialResult)
-                            } else {
-                                _uiState.value.appendMessage(it, partialResult, done)
-                            }
-                            if (done) {
-                                currentMessageId = null
-                                // Re-enable text input
-                                setInputEnabled(true)
-                            }
-                        }
-                    }
+                var responseAsync = inferenceModel.generateResponseAsync(fullPrompt)
+                _response.postValue(responseAsync)
+                setInputEnabled(true)
+//                inferenceModel.partialResults
+//                    .collectIndexed { index, (partialResult, done) ->
+//                        currentMessageId?.let {
+//                            if (index == 0) {
+//                                _uiState.value.appendFirstMessage(it, partialResult)
+//                            } else {
+//                                _uiState.value.appendMessage(it, partialResult, done)
+//                            }
+//                            if (done) {
+//                                currentMessageId = null
+//                                // Re-enable text input
+//                                setInputEnabled(true)
+//                            }
+//                        }
+//                    }
             } catch (e: Exception) {
                 _uiState.value.addMessage(e.localizedMessage ?: "Unknown Error", MODEL_PREFIX)
                 setInputEnabled(true)
             }
         }
-        Log.d("MainViewModel", "Message added, total: ${uiState.value?.messages?.size}")
     }
 
     private fun setInputEnabled(isEnabled: Boolean) {
