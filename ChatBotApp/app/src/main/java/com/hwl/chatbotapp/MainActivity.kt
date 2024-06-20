@@ -3,8 +3,8 @@ package com.hwl.chatbotapp
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.marginTop
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,7 +26,9 @@ class MainActivity : AppCompatActivity() {
         adapter = MessageAdapter(mainViewModel.getMessages(), mainViewModel)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
-        mainViewModel.addMessage(ChatMessage(message =  "你好！我是你的机器人助手。请问您今天有什么问题或需要帮助的吗？", author = MODEL_PREFIX))
+        if (mainViewModel.getMessages().isEmpty()){
+            mainViewModel.addMessage(ChatMessage(message =  "你好！我是你的机器人助手。请问您今天有什么问题或需要帮助的吗？", author = MODEL_PREFIX))
+        }
         binding.btnSend.setOnClickListener {
             val userMessage = binding.etMessage.text.toString()
             if (userMessage.isNotEmpty()) {

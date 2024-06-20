@@ -3,6 +3,8 @@
     <color name="black">#1b1b1b</color>
     <color name="white">#ffffff</color>
     <color name="bg">#111111</color>
+    <color name="start">#111111</color>
+    <color name="end">#111111</color>
     <color name="colorPrimary">#ffffff</color>
     <color name="text">#ffffff</color>
     <color name="editor">#1b1b1b</color>

@@ -2,6 +2,8 @@
 <resources>
     <color name="black">#1b1b1b</color>
     <color name="white">#ffffff</color>
+    <color name="start">#D0E6FE</color>
+    <color name="end">#ffffff</color>
     <color name="bg">#f5f5f5</color>
     <color name="colorPrimary">#0099ff</color>
     <color name="editor">#ffffff</color>
