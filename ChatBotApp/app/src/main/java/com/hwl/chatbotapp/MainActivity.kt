@@ -21,14 +21,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        // 显示进度条
-        binding.progressBar.visibility = View.VISIBLE
         mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
         TtsManager.initModels(this)
         adapter = MessageAdapter(mainViewModel.getMessages(), mainViewModel)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
-
+        mainViewModel.addMessage(ChatMessage(message =  "你好！我是你的机器人助手。请问您今天有什么问题或需要帮助的吗？", author = MODEL_PREFIX))
         binding.btnSend.setOnClickListener {
             val userMessage = binding.etMessage.text.toString()
             if (userMessage.isNotEmpty()) {
