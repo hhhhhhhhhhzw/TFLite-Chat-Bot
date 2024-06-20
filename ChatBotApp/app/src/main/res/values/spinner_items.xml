@@ -1,0 +1,5 @@
+<resources>
+    <string-array name="spinner_options">
+        <item>model</item>
+    </string-array>
+</resources>

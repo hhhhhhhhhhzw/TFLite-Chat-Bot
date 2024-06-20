@@ -12,4 +12,6 @@
     <color name="bot_message_bg">#ffffff</color>
     <color name="user_message_text">#ffffff</color>
     <color name="bot_message_text">#1b1b1b</color>
+    <color name="line">#65A8A8A8</color>
+    <color name="card">#A6FFFFFF</color>
 </resources>

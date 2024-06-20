@@ -1,9 +1,11 @@
 package com.hwl.chatbotapp
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.marginTop
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -22,6 +24,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val isNightModeEnabled = loadNightMode()
+        AppCompatDelegate.setDefaultNightMode(
+            if (isNightModeEnabled) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+        )
         mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
         TtsManager.initModels(this)
         adapter = MessageAdapter(mainViewModel.getMessages(), mainViewModel)
@@ -48,5 +54,14 @@ class MainActivity : AppCompatActivity() {
             adapter.notifyDataSetChanged()
             binding.recyclerView.scrollToPosition(adapter.itemCount - 1)
         })
+        binding.settingButton.setOnClickListener {
+            // 跳转到设置页面
+            startActivity(Intent(this@MainActivity, SettingActivity::class.java))
+        }
+    }
+    // 从SharedPreferences获取是否使用深色模式
+    fun loadNightMode(): Boolean {
+        val prefs = getSharedPreferences("settings", MODE_PRIVATE)
+        return prefs.getBoolean("NightMode", false) // 默认为 false
     }
 }

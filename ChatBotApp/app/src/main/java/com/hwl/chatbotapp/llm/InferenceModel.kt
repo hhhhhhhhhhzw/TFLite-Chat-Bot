@@ -8,12 +8,23 @@ import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import org.tensorflow.lite.TensorFlowLite.init
 
 class InferenceModel private constructor(context: Context) {
     private var llmInference: LlmInference
+    private var model: String = "model"
+    private var basePath: String = "/data/local/tmp/llm/"
+    private var modelPath = "$basePath$model.bin"
+    fun getModel(): String {
+        return model
+    }
+    fun setModel(model: String) {
+        this.model = model
+        modelPath = "$basePath$model.bin"
+    }
 
     private val modelExists: Boolean
-        get() = File(MODEL_PATH).exists()
+        get() = File(modelPath).exists()
 
     private val _partialResults = MutableSharedFlow<Pair<String, Boolean>>(
         extraBufferCapacity = 1,
@@ -23,11 +34,11 @@ class InferenceModel private constructor(context: Context) {
 
     init {
         if (!modelExists) {
-            throw IllegalArgumentException("Model not found at path: $MODEL_PATH")
+            throw IllegalArgumentException("Model not found at path: $modelPath")
         }
 
         val options = LlmInference.LlmInferenceOptions.builder()
-            .setModelPath(MODEL_PATH)
+            .setModelPath(modelPath)
             .setMaxTokens(1024)
             .setResultListener { partialResult, done ->
                 _partialResults.tryEmit(partialResult to done)
@@ -44,7 +55,6 @@ class InferenceModel private constructor(context: Context) {
     }
 
     companion object {
-        private const val MODEL_PATH = "/data/local/tmp/llm/model.bin"
         private var instance: InferenceModel? = null
 
         fun getInstance(context: Context): InferenceModel {

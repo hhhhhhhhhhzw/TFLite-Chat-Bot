@@ -44,7 +44,7 @@ class MessageAdapter(private var messages: List<ChatMessage>, private val mainVi
                 // AI消息显示在左侧
                 binding.tvBotMessage.apply {
                     // 渲染md格式
-                    if (!message.message.equals("思考中……")) markwon.setMarkdown(this, message.message)
+                    markwon.setMarkdown(this, message.message)
                     Log.d("TAG", "bind: ${message.message}")
                 }
                 binding.layoutBotMessage.apply {

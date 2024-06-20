@@ -1,0 +1,16 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 当开关为开启状态时的背景 -->
+    <item android:state_checked="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#A0DBFF"/> <!-- 浅蓝色 -->
+            <corners android:radius="12dp"/> <!-- 圆角大小 -->
+        </shape>
+    </item>
+    <!-- 当开关为关闭状态时的背景 -->
+    <item android:state_checked="false">
+        <shape android:shape="rectangle">
+            <solid android:color="#E0E0E0"/> <!-- 灰色 -->
+            <corners android:radius="12dp"/>
+        </shape>
+    </item>
+</selector>

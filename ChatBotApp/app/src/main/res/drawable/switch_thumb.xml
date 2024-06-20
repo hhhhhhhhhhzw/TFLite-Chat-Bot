@@ -1,0 +1,9 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 滑块的样式 -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/bg"/> <!-- 白色 -->
+            <size android:width="24dp" android:height="24dp"/> <!-- 滑块大小 -->
+        </shape>
+    </item>
+</selector>

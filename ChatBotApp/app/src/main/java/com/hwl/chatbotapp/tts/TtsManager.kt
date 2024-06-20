@@ -3,6 +3,7 @@ package com.hwl.chatbotapp.tts
 import android.content.Context
 import android.media.AudioFormat
 import android.speech.tts.SynthesisCallback
+import android.util.Log
 import com.benjaminwan.moshi.utils.moshiAny
 import com.hwl.chatbotapp.app.App
 import com.hwl.chatbotapp.common.FASTSPEECH2_NAME
@@ -110,6 +111,9 @@ object TtsManager {
     private fun sentenceToData(sentence: String): FloatArray? {
         val startTime = System.currentTimeMillis()
         val inputIds: IntArray = zhProcessor.text2ids(sentence)
+        Log.d("TAG", "sentenceToData: $type")
+        Log.d("TAG", "sentenceToData: $speed")
+
         val tensorOutput: TensorBuffer? = when (type) {
             TtsType.FASTSPEECH2 -> fastSpeech?.getMelSpectrogram(inputIds, speed)
             TtsType.TACOTRON2 -> tacotron?.getMelSpectrogram(inputIds)
