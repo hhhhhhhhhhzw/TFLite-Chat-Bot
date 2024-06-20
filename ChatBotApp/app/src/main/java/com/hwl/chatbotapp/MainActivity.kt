@@ -3,11 +3,13 @@ package com.hwl.chatbotapp
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hwl.chatbotapp.databinding.ActivityMainBinding
+import com.hwl.chatbotapp.tts.TtsManager
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -19,9 +21,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        // 显示进度条
+        binding.progressBar.visibility = View.VISIBLE
         mainViewModel = ViewModelProvider(this)[MainViewModel::class.java]
-
+        TtsManager.initModels(this)
         adapter = MessageAdapter(mainViewModel.getMessages(), mainViewModel)
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
