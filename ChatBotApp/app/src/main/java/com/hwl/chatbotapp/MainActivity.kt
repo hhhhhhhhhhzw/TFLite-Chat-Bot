@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hwl.chatbotapp.databinding.ActivityMainBinding
 import com.hwl.chatbotapp.tts.TtsManager
+import io.noties.markwon.Markwon
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding

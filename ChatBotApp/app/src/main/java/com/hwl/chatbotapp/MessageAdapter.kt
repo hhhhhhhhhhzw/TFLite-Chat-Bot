@@ -6,8 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.hwl.chatbotapp.app.App
 import com.hwl.chatbotapp.databinding.ItemMessageBinding
+import io.noties.markwon.Markwon
+
 class MessageAdapter(private var messages: List<ChatMessage>, private val mainViewModel: MainViewModel) : RecyclerView.Adapter<MessageAdapter.MessageViewHolder>() {
+    // 创建Markwon实例
+    private val markwon = Markwon.create(App.INSTANCE)
     @SuppressLint("NotifyDataSetChanged")
     fun setMessages(newMessages: List<ChatMessage>) {
         this.messages = newMessages
@@ -15,7 +20,7 @@ class MessageAdapter(private var messages: List<ChatMessage>, private val mainVi
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
         val binding = ItemMessageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return MessageViewHolder(binding,mainViewModel)
+        return MessageViewHolder(binding,markwon,mainViewModel)
     }
 
     override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
@@ -25,7 +30,7 @@ class MessageAdapter(private var messages: List<ChatMessage>, private val mainVi
 
     override fun getItemCount(): Int = messages.size
 
-    class MessageViewHolder(private val binding: ItemMessageBinding,private val mainViewModel: MainViewModel) : RecyclerView.ViewHolder(binding.root) {
+    class MessageViewHolder(private val binding: ItemMessageBinding,private val markwon: Markwon,private val mainViewModel: MainViewModel) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(message: ChatMessage) {
             if (message.isFromUser) {
@@ -38,7 +43,8 @@ class MessageAdapter(private var messages: List<ChatMessage>, private val mainVi
             } else {
                 // AI消息显示在左侧
                 binding.tvBotMessage.apply {
-                    text = message.message
+                    // 渲染md格式
+                    if (!message.message.equals("思考中……")) markwon.setMarkdown(this, message.message)
                     Log.d("TAG", "bind: ${message.message}")
                 }
                 binding.layoutBotMessage.apply {

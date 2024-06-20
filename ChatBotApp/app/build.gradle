@@ -57,6 +57,7 @@ dependencies {
     implementation 'com.github.benjaminwan:MoshiUtils:1.0.6'
     implementation group: 'org.tensorflow', name: 'tensorflow-lite-select-tf-ops', version: '2.12.0'
     implementation 'com.google.mediapipe:tasks-genai:0.10.14'
-
+    // 添加 Markwon 库
+    implementation 'io.noties.markwon:core:4.6.2'
 
 }
