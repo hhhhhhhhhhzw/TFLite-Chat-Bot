@@ -1,9 +1,11 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.ChatBotApp" parent="Theme.Material3.DayNight.NoActionBar">
-<!--        <item name="android:windowTranslucentNavigation">true</item>-->
-<!--        <item name="android:windowDrawsSystemBarBackgrounds">true</item>-->
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <!-- 设置状态栏颜色为透明 -->
+<!--        <item name="android:windowTranslucentStatus">true</item>-->
+
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@color/start</item>
         <!-- 顶部状态栏的图标设置为黑色 -->
         <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
         <item name="android:windowLightStatusBar" tools:targetApi="o_mr1">true</item>
