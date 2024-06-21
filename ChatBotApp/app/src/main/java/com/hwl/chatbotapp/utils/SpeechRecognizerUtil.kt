@@ -7,8 +7,8 @@ import kotlinx.coroutines.withContext
 
 object SpeechRecognizerUtil {
     private const val URL = "https://nls-gateway-cn-shanghai.aliyuncs.com/stream/v1/asr"
-    private const val APP_KEY = "wSAcj4oRRwBRe3DI"
-    private const val APP_SECRET = "6e9aaa1608404ac9b3dd3fe7409df757"
+    private const val APP_KEY = "appkey"
+    private const val APP_SECRET = "token"
     suspend fun process(
         fileName: String,
         format: String = "pcm",
