@@ -2,22 +2,33 @@ package com.hwl.chatbotapp
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.view.marginTop
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hwl.chatbotapp.databinding.ActivityMainBinding
 import com.hwl.chatbotapp.tts.TtsManager
-import io.noties.markwon.Markwon
+import com.hwl.chatbotapp.utils.AudioRecorderUtil
+import com.hwl.chatbotapp.utils.SpeechRecognizerUtil
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapter: MessageAdapter
     private lateinit var mainViewModel: MainViewModel
+    private val REQUEST_RECORD_AUDIO_PERMISSION = 200
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,10 +69,55 @@ class MainActivity : AppCompatActivity() {
             // 跳转到设置页面
             startActivity(Intent(this@MainActivity, SettingActivity::class.java))
         }
+        binding.btnBeginRecord.setOnClickListener {
+            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, arrayOf( android.Manifest.permission.RECORD_AUDIO), REQUEST_RECORD_AUDIO_PERMISSION)
+            } else {
+                startRecording()
+            }
+            binding.btnBeginRecord.isVisible = false
+            binding.btnStopRecord.isVisible = true
+        }
+        binding.btnStopRecord.setOnClickListener {
+            stopRecording()
+            processAudio()
+            binding.btnBeginRecord.isVisible = true
+            binding.btnStopRecord.isVisible = false
+        }
     }
     // 从SharedPreferences获取是否使用深色模式
     fun loadNightMode(): Boolean {
         val prefs = getSharedPreferences("settings", MODE_PRIVATE)
         return prefs.getBoolean("NightMode", false) // 默认为 false
     }
+
+    private fun startRecording() {
+        AudioRecorderUtil.startRecording()
+//        Toast.makeText(this, "Recording started", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun stopRecording() {
+        AudioRecorderUtil.stopRecording()
+//        Toast.makeText(this, "Recording stopped", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun processAudio() {
+        val audioFilePath = AudioRecorderUtil.getAudioFilePath()
+        Log.d("TAG", "processAudio: $audioFilePath")
+        CoroutineScope(Dispatchers.Main).launch {
+            val result = SpeechRecognizerUtil.process(audioFilePath)
+            // 更新输入框
+            binding.etMessage.text = result.toEditable()
+        }
+    }
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            startRecording()
+        } else {
+            Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
+        }
+    }
+    // 扩展函数，用于将String?转换为Editable
+    fun String?.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)
 }

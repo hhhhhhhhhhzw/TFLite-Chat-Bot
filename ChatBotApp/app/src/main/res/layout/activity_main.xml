@@ -61,17 +61,31 @@
                 android:layout_height="wrap_content"
                 android:background="@color/bg"
                 android:padding="8dp">
-
+                <Button
+                    android:id="@+id/btn_begin_record"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/ic_begin_record"
+                    android:visibility="visible" />
+                <Button
+                    android:id="@+id/btn_stop_record"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/ic_stop_record"
+                    android:visibility="gone" />
                 <EditText
                     android:id="@+id/et_message"
                     android:inputType="textShortMessage"
-                    android:layout_width="300dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:background="@drawable/style_button_background"
                     android:hint="请输入"
                     android:padding="10dp"
                     android:layout_weight="1"
+
                     android:textSize="18sp"
                     android:singleLine="true" />
 
